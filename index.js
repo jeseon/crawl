@@ -1,5 +1,5 @@
 var fs = require('fs');
-var http = require('http');
+var path = require('path');
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
@@ -17,18 +17,23 @@ app.get('/imgs', function(req, res) {
     
     request(url, function(err, req, body) {
         var $ = cheerio.load(body);
-        var images = $('#resContents img.content_image');
-        var imgs = [];
+        var imgs = $('#resContents div.attachedImage img, #resContents #writeContents img.content_image');
+        var images = [];
  
-        images.each(function(item, index, array) {
-            imgs.push($(this).attr("src"));
-        })
+        imgs.each(function(idx, img) {
+            var img_src = img.attribs.src;
+            var img_name = path.basename(img_src);
+            var img_path = __dirname + '/images/' + img_name;
+            
+            request(img_src).pipe(fs.createWriteStream(img_path));
+            images.push(img_src);
+        });
  
-        res.json({imgs: imgs});
+        res.json({imgs: images});
     });
  
 });
- 
-http.createServer(app).listen(3000, function() {
+
+app.listen(3000, function () {
     console.log('Server listening on port 3000.');
 });
