@@ -13,15 +13,13 @@
         
         $.ajax({
           type: 'GET',
-          url: 'imgs',
+          url: 'images',
           dataType: 'json',
           data: { url: target },
           success: function(data) {
-            var imgs = data.imgs;
-            
-            for (var idx in imgs) {
-              $('#contents').append('<img src="' + imgs[idx] + '" width="300"/>');
-            }
+            data.images.forEach(function(image) {
+              $('#contents').append('<img src="' + image + '" width="300"/>');
+            });
           }
         });
       });

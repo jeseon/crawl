@@ -12,7 +12,7 @@ app.get('/', function(req, res) {
     })
 })
  
-app.get('/imgs', function(req, res) {
+app.get('/images', function(req, res) {
     var url = req.query.url;
     
     request(url, function(err, req, body) {
@@ -29,7 +29,7 @@ app.get('/imgs', function(req, res) {
             images.push(img_src);
         });
  
-        res.json({imgs: images});
+        res.json({images: images});
     });
  
 });
