@@ -3,13 +3,13 @@ var path = require('path');
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
+var pug = require('pug');
 var app = express();
+
+app.set('view engine', 'pug');
  
 app.get('/', function(req, res) {
-    fs.readFile('index.html', function(err, data) {
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(data)
-    })
+    res.render('index');
 })
  
 app.get('/images', function(req, res) {
@@ -23,7 +23,7 @@ app.get('/images', function(req, res) {
         imgs.each(function(idx, img) {
             var img_src = img.attribs.src;
             var img_name = path.basename(img_src);
-            var img_path = __dirname + '/images/' + img_name;
+            var img_path = __dirname + '/data/' + img_name;
             
             request(img_src).pipe(fs.createWriteStream(img_path));
             images.push(img_src);
