@@ -3,7 +3,6 @@ var path = require('path');
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
-var pug = require('pug');
 var app = express();
 
 app.set('view engine', 'pug');
