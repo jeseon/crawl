@@ -9,7 +9,7 @@ app.set('view engine', 'pug');
 
 app.get('/', function(req, res) {
     res.render('index');
-})
+});
 
 app.get('/images', function(req, res) {
     var url = req.query.url;
