@@ -30,7 +30,6 @@ app.get('/images', function(req, res) {
 
         res.json({images: images});
     });
-
 });
 
 app.listen(3000, function () {
