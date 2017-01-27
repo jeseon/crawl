@@ -1,9 +1,7 @@
-"use strict";
-
 module.exports = function(sequelize, DataTypes) {
-    var Site = sequelize.define('site', {
+    var Site = sequelize.define('Site', {
         id: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
@@ -15,6 +13,9 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false
         }
+    }, {
+        tableName: 'site',
+        underscored: true
     });
 
     return Site;
