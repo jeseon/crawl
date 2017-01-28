@@ -33,7 +33,12 @@ module.exports = function(sequelize, DataTypes) {
         }
     }, {
         tableName: 'post',
-        underscored: true
+        underscored: true,
+        classMethods: {
+            associate: function(models) {
+                Post.hasMany(models.Image);
+            }
+        }
     });
 
     return Post;

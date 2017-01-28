@@ -1,19 +1,9 @@
-var models = require('../models');
-
 module.exports = function(sequelize, DataTypes) {
     var Image = sequelize.define('Image', {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
-        },
-        post_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                key: 'id',
-                model: models.Post
-            }
         },
         url: {
             type: DataTypes.STRING,
@@ -29,7 +19,12 @@ module.exports = function(sequelize, DataTypes) {
         }
     }, {
         tableName: 'image',
-        underscored: true
+        underscored: true,
+        classMethods: {
+            associate: function(models) {
+                Image.belongsTo(models.Post);
+            }
+        }
     });
 
     return Image;

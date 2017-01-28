@@ -6,6 +6,8 @@ var cheerio = require('cheerio');
 var models = require('./models');
 var app = express();
 
+models.Post.hasMany(models.Image);
+
 app.set('view engine', 'pug');
 
 app.get('/', (req, res) => {
@@ -22,28 +24,33 @@ app.get('/images', (req, res) => {
         var images = [];
         var urlParse = url.match(urlPattern);
 
-        models.Post.create({
-            site_id: 1,
-            no: urlParse[1],
-            title: $('div.view_title span').text(),
-            url: urlParse[0],
-            date: models.sequelize.fn('NOW')
-        }).then((result) => {
-            console.log(result);
-        }).catch((err) => {
-            console.log(err);
-        });
+        if (imgs) {
+            models.Post.create({
+                site_id: 1,
+                no: urlParse[1],
+                url: urlParse[0],
+                title: $('div.view_title span').text(),
+                date: models.sequelize.fn('NOW')
+            }).then((post) => {
+                imgs.each((idx, img) => {
+                    var imgSrc = img.attribs.src;
+                    var imgName = path.basename(imgSrc);
+                    var imgPath = __dirname + '/data/' + imgName;
 
-        imgs.each((idx, img) => {
-            var imgSrc = img.attribs.src;
-            var imgName = path.basename(imgSrc);
-            var imgPath = __dirname + '/data/' + imgName;
+                    request(imgSrc).pipe(fs.createWriteStream(imgPath));
+                    images.push(imgSrc);
 
-            request(imgSrc).pipe(fs.createWriteStream(imgPath));
-            images.push(imgSrc);
-        });
+                    models.Image.create({
+                        url: imgSrc,
+                        name: imgSrc.split('/').pop(),
+                        hash: 'test',
+                        post_id: post.id
+                    });
+                });
 
-        res.json({images: images});
+                res.json({images: images});
+            });
+        }
     });
 });
 
