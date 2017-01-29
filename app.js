@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var imghash = require('imghash');
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
@@ -36,16 +37,20 @@ app.get('/images', (req, res) => {
                     var imgSrc = img.attribs.src;
                     var imgName = path.basename(imgSrc);
                     var imgPath = __dirname + '/data/' + imgName;
+                    var stream = request(imgSrc).pipe(fs.createWriteStream(imgPath));
 
-                    request(imgSrc).pipe(fs.createWriteStream(imgPath));
-                    images.push(imgSrc);
-
-                    models.Image.create({
-                        url: imgSrc,
-                        name: imgSrc.split('/').pop(),
-                        hash: 'test',
-                        post_id: post.id
+                    stream.on('finish', () => {
+                        imghash.hash(imgPath).then((result) => {
+                            models.Image.create({
+                                url: imgSrc,
+                                name: imgName,
+                                hash: result,
+                                post_id: post.id
+                            });
+                        });
                     });
+
+                    images.push(imgSrc);
                 });
 
                 res.json({images: images});
